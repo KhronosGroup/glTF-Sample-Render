@@ -29,7 +29,6 @@ export default {
         resolve({
             browser: true,
             preferBuiltins: true,
-            dedupe: ['gl-matrix', 'jpeg-js', 'fast-png']
         }),
         builtins(),
         scss(),
