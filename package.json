@@ -1,7 +1,7 @@
 {
   "name": "gltf-viewer-source",
   "description": "Package for the source of gltf-viewer",
-  "main": "gltf-sample-viewer.js",
+  "main": "source/gltf-sample-viewer.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/KhronosGroup/glTF-Sample-Viewer.git"
