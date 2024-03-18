@@ -27,7 +27,7 @@
     "buefy": "^0.9.4",
     "fast-png": "^5.0.3",
     "gl-matrix": "^3.2.1",
-    "gltf-viewer-source": "..",
+    "gltf-viewer-source": "../source",
     "jpeg-js": "^0.4.3",
     "normalize-wheel": "^1.0.1",
     "path": "^0.12.7",
