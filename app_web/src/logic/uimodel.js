@@ -15,9 +15,8 @@ class UIModel
 
         this.app.models = modelPathProvider.getAllKeys();
 
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        const modelURL = urlParams.get("model");
+        const urlParameters = this.getURLParameters();
+        const modelURL = urlParameters.get("model");
 
         this.scene = app.sceneChanged.pipe();
         this.camera = app.cameraChanged.pipe();
@@ -31,32 +30,49 @@ class UIModel
 
         this.app.tonemaps = Object.keys(GltfState.ToneMaps).map((key) => ({title: GltfState.ToneMaps[key]}));
         this.tonemap = app.tonemapChanged.pipe(
-            startWith(GltfState.ToneMaps.KHR_PBR_NEUTRAL)
+            startWith(GltfState.ToneMaps.KHR_PBR_NEUTRAL) // TODO setting this does not do anything
         );
 
         this.app.debugchannels = Object.keys(GltfState.DebugOutput).map((key) => ({title: GltfState.DebugOutput[key]}));
         this.debugchannel = app.debugchannelChanged.pipe(
-            startWith(GltfState.DebugOutput.NONE)
+            startWith(GltfState.DebugOutput.NONE) // TODO setting this does not do anything
         );
 
         this.exposure = app.exposureChanged.pipe();
-        this.skinningEnabled = app.skinningChanged.pipe();
-        this.morphingEnabled = app.morphingChanged.pipe();
-        this.clearcoatEnabled = app.clearcoatChanged.pipe();
-        this.sheenEnabled = app.sheenChanged.pipe();
-        this.transmissionEnabled = app.transmissionChanged.pipe();
-        this.volumeEnabled = app.volumeChanged.pipe();
-        this.iorEnabled = app.iorChanged.pipe();
-        this.iridescenceEnabled = app.iridescenceChanged.pipe();
-        this.anisotropyEnabled = app.anisotropyChanged.pipe();
-        this.dispersionEnabled = app.dispersionChanged.pipe();
-        this.specularEnabled = app.specularChanged.pipe();
-        this.emissiveStrengthEnabled = app.emissiveStrengthChanged.pipe();
-        this.iblEnabled = app.iblChanged.pipe();
+        this.skinningEnabled = app.skinningChanged.pipe(
+            startWith(this.getURLParameterBool(urlParameters, "useSkinning", true)));
+        this.morphingEnabled = app.morphingChanged.pipe(
+            startWith(this.getURLParameterBool(urlParameters, "useMorphing", true)));
+        this.clearcoatEnabled = app.clearcoatChanged.pipe(
+            startWith(this.getURLParameterBool(urlParameters, "KHR_materials_clearcoat", true)));
+        this.sheenEnabled = app.sheenChanged.pipe(
+            startWith(this.getURLParameterBool(urlParameters, "KHR_materials_sheen", true)));
+        this.transmissionEnabled = app.transmissionChanged.pipe(
+            startWith(this.getURLParameterBool(urlParameters, "KHR_materials_transmission", true)));
+        this.volumeEnabled = app.volumeChanged.pipe(
+            startWith(this.getURLParameterBool(urlParameters, "KHR_materials_volume", true)));
+        this.iorEnabled = app.iorChanged.pipe(
+            startWith(this.getURLParameterBool(urlParameters, "KHR_materials_ior", true)));
+        this.iridescenceEnabled = app.iridescenceChanged.pipe(
+            startWith(this.getURLParameterBool(urlParameters, "KHR_materials_iridescence", true)));
+        this.anisotropyEnabled = app.anisotropyChanged.pipe(
+            startWith(this.getURLParameterBool(urlParameters, "KHR_materials_anisotropy", true)));
+        this.dispersionEnabled = app.dispersionChanged.pipe(
+            startWith(this.getURLParameterBool(urlParameters, "KHR_materials_dispersion", true)));
+        this.specularEnabled = app.specularChanged.pipe(
+            startWith(this.getURLParameterBool(urlParameters, "KHR_materials_specular", true)));
+        this.emissiveStrengthEnabled = app.emissiveStrengthChanged.pipe(
+            startWith(this.getURLParameterBool(urlParameters, "KHR_materials_emissive_strength", true)));
+        this.iblEnabled = app.iblChanged.pipe(
+            startWith(this.getURLParameterBool(urlParameters, "useIBL", true)));
         this.iblIntensity = app.iblIntensityChanged.pipe();
-        this.punctualLightsEnabled = app.punctualLightsChanged.pipe();
-        this.renderEnvEnabled = app.renderEnvChanged.pipe();
-        this.blurEnvEnabled = app.blurEnvChanged.pipe();
+        this.punctualLightsEnabled = app.punctualLightsChanged.pipe(
+            startWith(this.getURLParameterBool(urlParameters, "usePunctualLights", true)));
+        this.renderEnvEnabled = app.renderEnvChanged.pipe(
+            startWith(this.getURLParameterBool(urlParameters, "renderEnvironmentMap", true)));
+        this.blurEnvEnabled = app.blurEnvChanged.pipe(
+            startWith(this.getURLParameterBool(urlParameters, "blurEnvironmentMap", true))
+        );
         this.addEnvironment = app.addEnvironmentChanged.pipe();
         this.captureCanvas = app.captureCanvas.pipe();
         this.cameraValuesExport = app.cameraExport.pipe();
@@ -240,6 +256,24 @@ class UIModel
     exitLoadingState()
     {
         this.app.exitLoadingState();
+    }
+
+    getURLParameters()
+    {
+        const queryString = window.location.search;
+        const urlParameters = new URLSearchParams(queryString);
+        // TODO remove log
+        console.log("urlParams: ", urlParameters);
+        return urlParameters;
+    }
+
+    getURLParameterBool(urlParameters, parameterName, fallbackValue) 
+    {
+        if (urlParameters.get(parameterName) !== null) {
+            return urlParameters.get(parameterName) == "true";
+        } else {
+            return fallbackValue;
+        } 
     }
 }
 
